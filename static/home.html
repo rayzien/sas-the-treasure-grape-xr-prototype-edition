@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grape 5.4 | Spatial Intelligence</title>
+    <meta name="description" content="Grape 5.4 — The next evolution of the Treasure Project. A high-fidelity XR system in your browser using just your phone and a cardboard box.">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&family=Syncopate:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* ========== RESET & BASE ========== */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --accent: #bc13fe;
+            --accent-glow: rgba(188, 19, 254, 0.4);
+            --gold: #f59e0b;
+            --purple-400: #c084fc;
+            --purple-500: #a855f7;
+            --purple-600: #9333ea;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background: #020202;
+            color: #fff;
+            font-family: 'Outfit', sans-serif;
+            overflow-x: hidden;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        ::selection { background: var(--purple-500); color: #fff; }
+
+        a { color: inherit; text-decoration: none; }
+        img { max-width: 100%; display: block; }
+
+        .syncopate { font-family: 'Syncopate', sans-serif; }
+
+        /* ========== UTILITY HELPERS ========== */
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .items-center { align-items: center; }
+        .items-start { align-items: flex-start; }
+        .justify-center { justify-content: center; }
+        .justify-between { justify-content: space-between; }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        .relative { position: relative; }
+        .absolute { position: absolute; }
+        .fixed { position: fixed; }
+        .inline-block { display: inline-block; }
+        .hidden { display: none; }
+        .w-full { width: 100%; }
+        .mx-auto { margin-left: auto; margin-right: auto; }
+
+        .gap-2 { gap: 0.5rem; }
+        .gap-4 { gap: 1rem; }
+        .gap-6 { gap: 1.5rem; }
+        .gap-8 { gap: 2rem; }
+        .gap-12 { gap: 3rem; }
+        .gap-20 { gap: 5rem; }
+        .gap-24 { gap: 6rem; }
+
+        .mb-4 { margin-bottom: 1rem; }
+        .mb-6 { margin-bottom: 1.5rem; }
+        .mb-8 { margin-bottom: 2rem; }
+        .mb-10 { margin-bottom: 2.5rem; }
+        .mb-12 { margin-bottom: 3rem; }
+        .mb-16 { margin-bottom: 4rem; }
+        .mb-24 { margin-bottom: 6rem; }
+        .mt-20 { margin-top: 5rem; }
+
+        .p-6 { padding: 1.5rem; }
+        .p-10 { padding: 2.5rem; }
+        .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+        .px-12 { padding-left: 3rem; padding-right: 3rem; }
+        .py-5 { padding-top: 1.25rem; padding-bottom: 1.25rem; }
+        .py-8 { padding-top: 2rem; padding-bottom: 2rem; }
+        .py-32 { padding-top: 8rem; padding-bottom: 8rem; }
+        .py-40 { padding-top: 10rem; padding-bottom: 10rem; }
+        .py-60 { padding-top: 15rem; padding-bottom: 15rem; }
+        .pt-20 { padding-top: 5rem; }
+
+        .rounded-sm { border-radius: 0.125rem; }
+        .rounded-md { border-radius: 0.375rem; }
+        .rounded-full { border-radius: 9999px; }
+        .rounded-2xl { border-radius: 1rem; }
+        .rounded-3xl { border-radius: 1.5rem; }
+        .rounded-48 { border-radius: 48px; }
+
+        .font-light { font-weight: 300; }
+        .font-bold { font-weight: 700; }
+        .font-black { font-weight: 900; }
+
+        .tracking-tighter { letter-spacing: -0.05em; }
+        .tracking-tight { letter-spacing: -0.025em; }
+        .tracking-wide { letter-spacing: 0.025em; }
+        .tracking-widest { letter-spacing: 0.1em; }
+
+        .leading-none { line-height: 1; }
+        .leading-tight { line-height: 1.25; }
+        .leading-relaxed { line-height: 1.75; }
+
+        .uppercase { text-transform: uppercase; }
+        .italic { font-style: italic; }
+
+        .opacity-20 { opacity: 0.2; }
+        .opacity-30 { opacity: 0.3; }
+        .opacity-60 { opacity: 0.6; }
+
+        .max-w-2xl { max-width: 42rem; }
+        .max-w-4xl { max-width: 56rem; }
+        .max-w-5xl { max-width: 64rem; }
+        .max-w-7xl { max-width: 80rem; }
+        .max-w-xs { max-width: 20rem; }
+
+        .min-h-screen { min-height: 100vh; }
+
+        .border-t { border-top: 1px solid rgba(255,255,255,0.05); }
+
+        .transition-all { transition: all 0.3s ease; }
+        .transition-colors { transition: color 0.3s ease; }
+        .transition-transform { transition: transform 0.3s ease; }
+        .duration-300 { transition-duration: 300ms; }
+        .duration-500 { transition-duration: 500ms; }
+
+        /* ========== RESPONSIVE GRID ========== */
+        .grid { display: grid; }
+        .grid-cols-1 { grid-template-columns: 1fr; }
+
+        @media (min-width: 768px) {
+            .md-flex { display: flex; }
+            .md-flex-row { flex-direction: row; }
+            .md-grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+            .md-grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+            .md-text-9xl { font-size: 8rem; }
+            .md-text-xl { font-size: 1.25rem; }
+            .md-items-start { align-items: flex-start; }
+            .nav-links { display: flex !important; }
+        }
+
+        /* ========== TEXT SIZES ========== */
+        .text-8px { font-size: 8px; }
+        .text-9px { font-size: 9px; }
+        .text-10px { font-size: 10px; }
+        .text-xs { font-size: 0.75rem; }
+        .text-sm { font-size: 0.875rem; }
+        .text-lg { font-size: 1.125rem; }
+        .text-xl { font-size: 1.25rem; }
+        .text-2xl { font-size: 1.5rem; }
+        .text-4xl { font-size: 2.25rem; }
+        .text-5xl { font-size: 3rem; }
+        .text-7xl { font-size: 4.5rem; }
+        .text-8xl { font-size: 6rem; }
+
+        /* ========== COLORS ========== */
+        .text-white-20 { color: rgba(255,255,255,0.1); }
+        .text-white-30 { color: rgba(255,255,255,0.3); }
+        .text-white-40 { color: rgba(255,255,255,0.4); }
+        .text-purple-400 { color: var(--purple-400); }
+        .text-yellow-500 { color: var(--gold); }
+
+        .bg-purple-500 { background: var(--purple-500); }
+        .bg-purple-600 { background: var(--purple-600); }
+
+        /* ========== 3D PARALLAX SPACE ========== */
+        #viewport {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: -1;
+            perspective: 2000px;
+            background: radial-gradient(circle at center, #111 0%, #000 100%);
+        }
+
+        .nebula {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 150%; height: 150%;
+            background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+            transform: translate(-50%, -50%) translateZ(-1000px);
+            opacity: 0.2;
+            filter: blur(100px);
+            animation: pulse-nebula 10s infinite alternate;
+        }
+
+        @keyframes pulse-nebula {
+            from { opacity: 0.1; transform: translate(-50%, -50%) translateZ(-1000px) scale(1); }
+            to { opacity: 0.3; transform: translate(-50%, -50%) translateZ(-1000px) scale(1.2); }
+        }
+
+        .stars {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            opacity: 0.2;
+            background-image: radial-gradient(white 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        /* ========== GLASSMORPHISM ========== */
+        .glass {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        /* ========== VR CARDBOARD MODEL ========== */
+        .vr-box-container {
+            width: 300px;
+            height: 200px;
+            perspective: 1000px;
+            transform-style: preserve-3d;
+            cursor: pointer;
+        }
+
+        .vr-box {
+            position: relative;
+            width: 100%; height: 100%;
+            transform-style: preserve-3d;
+            transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .vr-face {
+            position: absolute;
+            background: #3d2b1f;
+            border: 1px solid rgba(0,0,0,0.5);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.4);
+        }
+
+        .vr-front { width: 300px; height: 180px; transform: translateZ(90px); background: #4a3427; display: flex; align-items: center; justify-content: center; gap: 40px; }
+        .vr-back { width: 300px; height: 180px; transform: rotateY(180deg) translateZ(90px); }
+        .vr-right { width: 180px; height: 180px; transform: rotateY(90deg) translateZ(210px); }
+        .vr-left { width: 180px; height: 180px; transform: rotateY(-90deg) translateZ(90px); }
+        .vr-top { width: 300px; height: 180px; transform: rotateX(90deg) translateZ(90px); }
+        .vr-bottom { width: 300px; height: 180px; transform: rotateX(-90deg) translateZ(90px); }
+
+        .lens {
+            width: 60px; height: 60px;
+            background: radial-gradient(circle, #bc13fe 0%, #111 80%);
+            border-radius: 50%;
+            border: 2px solid rgba(188, 19, 254, 0.5);
+            box-shadow: 0 0 30px var(--accent-glow);
+            animation: pulse-lens 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse-lens {
+            0%, 100% { box-shadow: 0 0 20px var(--accent-glow); }
+            50% { box-shadow: 0 0 40px var(--accent-glow); transform: scale(1.05); }
+        }
+
+        /* ========== HERO TEXT ========== */
+        .hero-text {
+            background: linear-gradient(180deg, #fff 0%, rgba(255,255,255,0.3) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ========== GLOW BUTTON ========== */
+        .btn-glow {
+            display: inline-block;
+            box-shadow: 0 0 30px var(--accent-glow);
+            transition: all 0.3s ease;
+        }
+
+        .btn-glow:hover {
+            box-shadow: 0 0 60px var(--accent-glow);
+            transform: scale(1.05);
+        }
+
+        /* ========== STAT CARD ========== */
+        .stat-card {
+            transition: all 0.4s ease;
+        }
+        .stat-card:hover {
+            background: rgba(255, 255, 255, 0.05) !important;
+            border-color: var(--accent) !important;
+            transform: translateY(-10px);
+        }
+
+        /* ========== CUSTOM CURSOR ========== */
+        #cursor {
+            width: 30px; height: 30px;
+            border: 2px solid var(--accent);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.1s ease, background 0.3s ease;
+            transform: translate(-50%, -50%);
+        }
+
+        /* ========== SCROLL ANIMATION ========== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px) scale(0.95);
+            transition: all 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        /* ========== HEADER ========== */
+        #header {
+            z-index: 1000;
+        }
+        #header.scrolled {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+
+        /* ========== NAV LINKS ========== */
+        .nav-links {
+            display: none;
+            gap: 3rem;
+            font-size: 10px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.4em;
+            color: rgba(255,255,255,0.4);
+        }
+        .nav-links a:hover { color: var(--purple-400); }
+
+        /* ========== SECTION SKEW BG ========== */
+        .skew-bg {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255,255,255,0.05);
+            transform: skewY(3deg);
+            z-index: -1;
+        }
+
+        /* ========== RESPONSIVE ========== */
+        @media (min-width: 768px) {
+            .hero-title { font-size: 8rem; }
+            .hero-subtitle { font-size: 1.25rem; }
+            .cta-row { flex-direction: row; }
+            .vision-grid { grid-template-columns: repeat(2, 1fr); }
+            .experience-grid { grid-template-columns: repeat(3, 1fr); }
+            .specs-grid { grid-template-columns: repeat(2, 1fr); }
+            .footer-inner { flex-direction: row; }
+            .footer-col { align-items: flex-start; }
+            .footer-legal { text-align: right; }
+            .nav-links { display: flex; }
+        }
+
+        /* ========== DROP SHADOW ========== */
+        .drop-shadow-purple { filter: drop-shadow(0 0 100px var(--accent-glow)); }
+        .drop-shadow-lg { filter: drop-shadow(0 10px 8px rgba(0,0,0,.4)) drop-shadow(0 4px 3px rgba(0,0,0,.1)); }
+
+        /* ========== SCROLL INDICATOR ========== */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            opacity: 0.3;
+        }
+        .scroll-line {
+            width: 2px; height: 3rem;
+            background: linear-gradient(to bottom, var(--purple-500), transparent);
+        }
+
+        /* ========== FEATURE ICON BOX ========== */
+        .feature-icon-box {
+            width: 3rem; height: 3rem;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(168,85,247,0.2);
+            transition: all 0.3s ease;
+        }
+        .feature-row:hover .feature-icon-box {
+            border-color: var(--purple-500);
+        }
+
+        /* ========== BLUR ORBS ========== */
+        .blur-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="cursor"></div>
+
+    <div id="viewport">
+        <div class="nebula"></div>
+        <div class="stars"></div>
+    </div>
+
+    <!-- Header -->
+    <header id="header" class="fixed" style="top:0;width:100%;padding:2rem 3rem;display:flex;justify-content:space-between;align-items:center;transition:all 0.5s ease;">
+        <div class="flex items-center gap-4" style="cursor:pointer;">
+            <div class="glass" style="width:40px;height:40px;border-radius:1rem;display:flex;align-items:center;justify-content:center;transition:transform 0.3s ease;">
+                <div style="width:16px;height:16px;background:var(--purple-500);border-radius:2px;"></div>
+            </div>
+            <span class="syncopate font-black" style="font-size:1.25rem;letter-spacing:-0.05em;">GRAPE 5.4</span>
+        </div>
+        
+        <div class="nav-links">
+            <a href="#vision">Vision</a>
+            <a href="#experience">Experience</a>
+            <a href="#specs">Performance</a>
+        </div>
+
+        <div class="glass" style="width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;">
+            <div style="width:4px;height:4px;background:#fff;border-radius:50%;"></div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <main style="position:relative;z-index:10;">
+        <section class="min-h-screen flex flex-col items-center justify-center" style="padding-top:5rem;padding-left:1.5rem;padding-right:1.5rem;">
+            <div class="vr-box-container mb-24" id="vr-model-wrapper">
+                <div class="vr-box" id="vr-box">
+                    <div class="vr-face vr-front">
+                        <div class="lens"></div>
+                        <div class="lens"></div>
+                    </div>
+                    <div class="vr-face vr-back"></div>
+                    <div class="vr-face vr-right"></div>
+                    <div class="vr-face vr-left"></div>
+                    <div class="vr-face vr-top"></div>
+                    <div class="vr-face vr-bottom"></div>
+                </div>
+            </div>
+
+            <div class="text-center" style="max-width:56rem;">
+                <h1 class="syncopate font-black hero-text hero-title" style="font-size:4.5rem;margin-bottom:2rem;letter-spacing:-0.05em;line-height:1;">
+                    GRAPE
+                </h1>
+                <p class="text-white-40 font-light" style="font-size:1.125rem;margin-bottom:3rem;letter-spacing:0.025em;max-width:42rem;margin-left:auto;margin-right:auto;line-height:1.75;">
+                    The next evolution of the <span style="color:#fff;font-weight:700;">Treasure Project</span>. A high-fidelity XR system in your browser. Just your phone and a cardboard box.
+                </p>
+
+                <div class="flex flex-col items-center justify-center cta-row" style="gap:1.5rem;">
+                    <a href="/grape" class="btn-glow" style="padding:1.25rem 3rem;background:var(--purple-600);border-radius:9999px;">
+                        <span class="syncopate font-black uppercase" style="font-size:0.75rem;letter-spacing:0.5em;">Enter Portal</span>
+                    </a>
+                    <p class="font-bold uppercase text-white-20" style="font-size:10px;letter-spacing:0.3em;">
+                        Voice &amp; Gesture Enabled
+                    </p>
+                </div>
+            </div>
+
+            <div class="scroll-indicator">
+                <span class="font-black uppercase" style="font-size:8px;letter-spacing:0.4em;">Scroll</span>
+                <div class="scroll-line"></div>
+            </div>
+        </section>
+
+        <!-- Vision Section -->
+        <section id="vision" style="padding:10rem 1.5rem;max-width:80rem;margin:0 auto;">
+            <div class="grid vision-grid" style="gap:6rem;align-items:center;">
+                <div class="reveal">
+                    <h2 class="syncopate font-black" style="font-size:2.25rem;margin-bottom:2rem;letter-spacing:-0.05em;line-height:1.25;">THE MR<br>STANDARD</h2>
+                    <p class="text-white-40" style="line-height:1.75;margin-bottom:2.5rem;font-size:1.125rem;">
+                        Grape 5.4 leverages the full power of MediaPipe and WebXR to bring hand tracking and spatial mapping to consumer hardware. No headsets required—only the perspective of your device.
+                    </p>
+                    <div class="flex flex-col" style="gap:1.5rem;">
+                        <div class="flex items-center feature-row" style="gap:1.5rem;">
+                            <div class="feature-icon-box glass">
+                                <svg style="width:24px;height:24px;color:var(--purple-400);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
+                            </div>
+                            <div>
+                                <h4 class="font-bold uppercase" style="font-size:0.875rem;letter-spacing:0.1em;">Voice Core</h4>
+                                <p class="text-white-30" style="font-size:0.75rem;">Natural language command architecture.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center feature-row" style="gap:1.5rem;">
+                            <div class="feature-icon-box glass">
+                                <svg style="width:24px;height:24px;color:var(--purple-400);" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0V12m3.5-7a1.5 1.5 0 013 0v6.5m-3-6.5V5a1.5 1.5 0 013 0v6.5"></path></svg>
+                            </div>
+                            <div>
+                                <h4 class="font-bold uppercase" style="font-size:0.875rem;letter-spacing:0.1em;">Neural Hands</h4>
+                                <p class="text-white-30" style="font-size:0.75rem;">Pinch and grab digital matter.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative reveal" style="transition-delay: 0.3s">
+                    <img src="/static/cardboard_vr_spatial_hero.png" class="drop-shadow-purple w-full" alt="Spatial Preview">
+                    <div class="blur-orb" style="top:-40px;right:-40px;width:160px;height:160px;background:rgba(147,51,234,0.1);"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Experience Section -->
+        <section id="experience" style="padding:10rem 0;position:relative;">
+            <div class="skew-bg"></div>
+            <div style="max-width:80rem;margin:0 auto;padding:0 1.5rem;">
+                <div class="text-center reveal" style="margin-bottom:6rem;">
+                    <h2 class="syncopate font-black" style="font-size:2.25rem;margin-bottom:1.5rem;letter-spacing:-0.05em;">GLOBAL TREASURE</h2>
+                    <p class="text-white-40 mx-auto" style="max-width:36rem;">Travel to real-world sectors, scan for intel, and archive Gold. Every point you earn is valid across the Treasure Project ecosystem.</p>
+                </div>
+                
+                <div class="grid experience-grid" style="gap:2rem;">
+                    <div class="glass stat-card reveal" style="padding:2.5rem;border-radius:48px;">
+                        <img src="/static/spatial_travel_world.png" style="width:6rem;margin-bottom:2rem;opacity:0.6;" alt="World">
+                        <h3 class="font-bold uppercase" style="font-size:1.25rem;margin-bottom:1rem;letter-spacing:-0.025em;">World Scan</h3>
+                        <p class="text-white-40" style="font-size:0.875rem;line-height:1.75;">Integrated GPS and Telemetry for real-world coordinate tracking and sector discovery.</p>
+                    </div>
+                    <div class="glass stat-card reveal" style="padding:2.5rem;border-radius:48px;transition-delay:0.2s;">
+                        <div class="font-black drop-shadow-lg" style="font-size:3rem;color:var(--gold);margin-bottom:2rem;">GOLD</div>
+                        <h3 class="font-bold uppercase" style="font-size:1.25rem;margin-bottom:1rem;letter-spacing:-0.025em;">Economy</h3>
+                        <p class="text-white-40" style="font-size:0.875rem;line-height:1.75;">Earn points for every new location identified. Real-time balance syncing via Supabase.</p>
+                    </div>
+                    <div class="glass stat-card reveal" style="padding:2.5rem;border-radius:48px;transition-delay:0.4s;">
+                        <div style="width:4rem;height:4rem;background:rgba(255,255,255,0.1);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:2rem;">
+                            <div style="width:2rem;height:2px;background:#fff;"></div>
+                        </div>
+                        <h3 class="font-bold uppercase" style="font-size:1.25rem;margin-bottom:1rem;letter-spacing:-0.025em;">Coming Soon</h3>
+                        <p class="text-white-40" style="font-size:0.875rem;line-height:1.75;">New modules: AI Companion, Social Sectors, and Direct-to-Device AR Messaging.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Performance Specs -->
+        <section id="specs" class="text-center mx-auto" style="padding:15rem 1.5rem;max-width:64rem;">
+            <div class="reveal">
+                <h2 class="syncopate font-black text-white-20" style="font-size:1.5rem;margin-bottom:4rem;letter-spacing:0.5em;">SYSTEM TARGETS</h2>
+                <div class="grid specs-grid" style="gap:5rem;">
+                    <div>
+                        <div class="font-black" style="font-size:6rem;margin-bottom:1rem;transition:color 0.3s ease;cursor:default;">6GB</div>
+                        <p class="font-bold uppercase text-white-40" style="font-size:10px;letter-spacing:0.6em;">System RAM Required</p>
+                    </div>
+                    <div>
+                        <div class="font-black" style="font-size:6rem;margin-bottom:1rem;transition:color 0.3s ease;cursor:default;">600K</div>
+                        <p class="font-bold uppercase text-white-40" style="font-size:10px;letter-spacing:0.6em;">Antutu Score Baseline</p>
+                    </div>
+                </div>
+                <div class="glass inline-block" style="margin-top:5rem;padding:1.5rem;border-radius:1.5rem;">
+                    <p class="font-bold uppercase italic text-purple-400" style="font-size:10px;letter-spacing:0.1em;">Optimized for High-Fidelity Mobile Hardware</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="border-t" style="padding:8rem 1.5rem;">
+            <div class="flex flex-col items-center footer-inner" style="max-width:80rem;margin:0 auto;justify-content:space-between;gap:3rem;">
+                <div class="flex flex-col items-center footer-col">
+                    <div class="flex items-center" style="gap:1rem;margin-bottom:1rem;">
+                        <div style="width:24px;height:24px;background:#fff;border-radius:6px;"></div>
+                        <span class="syncopate font-bold" style="font-size:0.875rem;letter-spacing:-0.05em;">GRAPE</span>
+                    </div>
+                    <p class="font-bold uppercase text-white-20" style="font-size:9px;letter-spacing:0.4em;">Designed by pheonix14 // 2026</p>
+                </div>
+
+                <div class="flex" style="gap:3rem;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:0.3em;color:rgba(255,255,255,0.3);">
+                    <a href="#" style="transition:color 0.3s;">Github</a>
+                    <a href="#" style="transition:color 0.3s;">Twitter</a>
+                    <a href="#" style="transition:color 0.3s;">Treasure Project</a>
+                </div>
+
+                <div class="font-bold uppercase text-white-20 footer-legal" style="font-size:8px;letter-spacing:0.2em;max-width:20rem;text-align:center;">
+                    Experience requires a modern mobile browser and a cardboard VR/AR box for stereoscopic depth.
+                </div>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        // --- Custom Cursor ---
+        const cursor = document.getElementById('cursor');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        document.addEventListener('mousedown', () => cursor.style.transform = 'translate(-50%, -50%) scale(0.8)');
+        document.addEventListener('mouseup', () => cursor.style.transform = 'translate(-50%, -50%) scale(1)');
+
+        // --- 3D VR Box Mouse Interaction ---
+        const vrBox = document.getElementById('vr-box');
+        
+        document.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth - 0.5) * 40;
+            const y = (e.clientY / window.innerHeight - 0.5) * 40;
+            
+            if (vrBox) {
+                vrBox.style.transform = `rotateX(${y}deg) rotateY(${x}deg)`;
+            }
+
+            // Move nebula slightly
+            const nebula = document.querySelector('.nebula');
+            if (nebula) {
+                nebula.style.transform = `translate(calc(-50% + ${x/2}px), calc(-50% + ${y/2}px)) translateZ(-1000px)`;
+            }
+        });
+
+        // --- Header Scroll Effect ---
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('header');
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // --- Scroll Reveal ---
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // --- Smooth Navigation ---
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // --- Spec hover effect ---
+        document.querySelectorAll('#specs .grid > div').forEach(el => {
+            const num = el.querySelector('div');
+            if (num) {
+                el.addEventListener('mouseenter', () => num.style.color = 'var(--purple-500)');
+                el.addEventListener('mouseleave', () => num.style.color = '#fff');
+            }
+        });
+
+        // --- Footer link hover ---
+        document.querySelectorAll('footer a').forEach(a => {
+            a.addEventListener('mouseenter', () => a.style.color = '#fff');
+            a.addEventListener('mouseleave', () => a.style.color = 'rgba(255,255,255,0.3)');
+        });
+    </script>
+</body>
+</html>
